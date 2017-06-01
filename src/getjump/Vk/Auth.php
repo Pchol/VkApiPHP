@@ -149,15 +149,7 @@ class Auth
         return false;
     }
 
-    /**
-     * Method converts code to token.
-     *
-     * @param $code
-     *
-     * @return \getjump\Vk\Response\Auth|bool
-     */
-    public function getToken($code)
-    {
+    public function getTokenData($code) {
         if (!$this->guzzle) {
             $this->guzzle = new \GuzzleHttp\Client();
         }
@@ -172,6 +164,20 @@ class Auth
 
         $data = $this->guzzle->get($uri)->getBody();
         $data = json_decode($data);
+
+        return $data;
+    }
+
+    /**
+     * Method converts code to token.
+     *
+     * @param $code
+     *
+     * @return \getjump\Vk\Response\Auth|bool
+     */
+    public function getToken($code)
+    {
+        $data = $this->getTokenData($code);
 
         if (isset($data->access_token)) {
             return new \getjump\Vk\Response\Auth($data->access_token, $data->expires_in, $data->user_id);
